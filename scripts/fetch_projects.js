@@ -9,13 +9,29 @@ const __dirname = path.dirname(__filename);
 const GITHUB_USERNAME = 'Emirhan1642';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// Repositories and their custom display names
+// Repositories, their custom display names and custom descriptions
+// If you don't have a description on GitHub, it will use the one provided here.
 const REPOS = {
-  'Nexus-Studio': 'Nexus Studio',
-  'Nexus-Plugin': 'Nexus Plugin',
-  'Linker': 'Linker',
-  'Studio': 'Studio Core',
-  'Roblox-Project': 'Roblox Experience'
+  'Nexus-Studio': {
+    name: 'Nexus Studio',
+    desc: 'Advanced IDE and development environment for Next-Gen creators.'
+  },
+  'Nexus-Plugin': {
+    name: 'Nexus Plugin',
+    desc: 'Core plugin system and extensions for the Nexus ecosystem.'
+  },
+  'Linker': {
+    name: 'Linker',
+    desc: 'High-performance API gateway and routing service.'
+  },
+  'Studio': {
+    name: 'Studio Core',
+    desc: 'The foundational engine and core components of Studio.'
+  },
+  'Roblox-Project': {
+    name: 'Roblox Experience',
+    desc: 'Custom Roblox experience leveraging Lua and external APIs.'
+  }
 };
 
 async function fetchProjects() {
@@ -24,34 +40,75 @@ async function fetchProjects() {
   }
 
   const projects = [];
+  const headers = {
+    'Authorization': GITHUB_TOKEN ? `Bearer ${GITHUB_TOKEN}` : '',
+    'Accept': 'application/vnd.github.v3+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
 
-  for (const [repoName, displayName] of Object.entries(REPOS)) {
+  for (const [repoName, config] of Object.entries(REPOS)) {
     try {
       console.log(`Fetching data for ${repoName}...`);
-      const response = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repoName}`, {
-        headers: {
-          'Authorization': GITHUB_TOKEN ? `Bearer ${GITHUB_TOKEN}` : '',
-          'Accept': 'application/vnd.github.v3+json',
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      });
+      
+      // Fetch Repo details
+      const repoRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repoName}`, { headers });
 
-      if (!response.ok) {
-        console.error(`❌ Failed to fetch ${repoName}: ${response.status} ${response.statusText}`);
+      if (!repoRes.ok) {
+        console.error(`❌ Failed to fetch ${repoName}: ${repoRes.status} ${repoRes.statusText}`);
         continue;
       }
 
-      const data = await response.json();
+      const data = await repoRes.json();
+      
+      // Fetch Languages
+      let allLanguages = [];
+      try {
+        const langRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repoName}/languages`, { headers });
+        if (langRes.ok) {
+          const langData = await langRes.json();
+          // Returns object like { "C++": 1024, "JavaScript": 500 }
+          allLanguages = Object.keys(langData); 
+        }
+      } catch (err) {
+        console.error(`⚠️ Could not fetch languages for ${repoName}:`, err.message);
+      }
+      
+      // Fetch recent commits (last 2)
+      let recentCommits = [];
+      try {
+        const commitsRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repoName}/commits?per_page=2`, { headers });
+        if (commitsRes.ok) {
+          const commitsData = await commitsRes.json();
+          recentCommits = commitsData.map(c => ({
+            message: c.commit.message.split('\n')[0], // Get only the first line of the message
+            sha: c.sha.substring(0, 7),
+            date: c.commit.author.date
+          }));
+        }
+      } catch (err) {
+        console.error(`⚠️ Could not fetch commits for ${repoName}:`, err.message);
+      }
       
       projects.push({
         id: data.id,
-        name: data.name,
-        displayName: displayName,
-        description: data.description || 'No description provided.',
-        url: data.html_url, // URL to the repo (might be 404 for visitors if it's private, maybe we don't link it or link to a generic page)
+        name: repoName,
+        displayName: config.name,
+        // Fallback to custom description if GitHub description is null
+        description: data.description || config.desc,
+        url: data.html_url,
         isPrivate: data.private,
-        language: data.language,
-        stars: data.stargazers_count,
+        // Primary language
+        language: data.language, 
+        // Array of all languages used
+        allLanguages: allLanguages, 
+        topics: data.topics || [],
+        stats: {
+          stars: data.stargazers_count,
+          forks: data.forks_count,
+          watchers: data.watchers_count,
+          issues: data.open_issues_count
+        },
+        commits: recentCommits,
         createdAt: data.created_at,
         pushedAt: data.pushed_at
       });
@@ -64,7 +121,7 @@ async function fetchProjects() {
   // Sort projects by pushed_at descending (most recently active first)
   projects.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
 
-  // Save to public directory so it can be fetched by the frontend
+  // Save to public directory
   const publicDir = path.join(__dirname, '..', 'public');
   if (!fs.existsSync(publicDir)) {
     fs.mkdirSync(publicDir);
