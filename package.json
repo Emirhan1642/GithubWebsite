@@ -12,5 +12,8 @@
   "devDependencies": {
     "dotenv": "^16.4.5",
     "vite": "^5.2.0"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }

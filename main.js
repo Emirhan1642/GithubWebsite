@@ -1,3 +1,8 @@
+import { inject } from '@vercel/analytics';
+
+// Initialize Vercel Analytics
+inject();
+
 // Theme Toggle Logic
 const themeToggleBtn = document.getElementById('theme-toggle');
 const htmlEl = document.documentElement;
