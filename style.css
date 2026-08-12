@@ -328,6 +328,191 @@ body {
   opacity: 0; /* Starts hidden, animation makes it visible */
 }
 
+/* Tabs System */
+.tabs-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 1rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--glass-bg);
+}
+
+.tab-btn.active {
+  color: var(--accent-color);
+  background: rgba(184, 41, 255, 0.1);
+  box-shadow: 0 0 20px rgba(184, 41, 255, 0.2);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: flex; /* For projects-grid */
+}
+
+#designs-grid.active {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* UI Design Project Container */
+.design-project {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.design-header h4 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.design-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Horizontal Scroll Gallery */
+.design-gallery {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  height: 400px; /* Sabit yükseklik, Y-fit için */
+}
+
+/* Hide scrollbar but keep functionality */
+.design-gallery::-webkit-scrollbar {
+  height: 8px;
+}
+.design-gallery::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+}
+.design-gallery::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+}
+
+.design-image-wrapper {
+  flex: 0 0 auto; /* X boyutu resmin kendi boyutuna göre belirlensin */
+  height: 100%; /* Y boyutuna (400px) otursun */
+  scroll-snap-align: center;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  cursor: zoom-in;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--glass-bg);
+}
+
+.design-image-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
+  border-color: rgba(184, 41, 255, 0.4);
+}
+
+.design-image-wrapper img {
+  height: 100%;
+  width: auto;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.design-image-wrapper:hover img {
+  transform: scale(1.03);
+}
+
+/* Lightbox Modal */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.lightbox.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 10000;
+  transition: transform 0.3s ease;
+}
+
+.lightbox-close:hover {
+  transform: scale(1.2);
+  color: #f43f5e;
+}
+
+.lightbox-content {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  transform: scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lightbox.active .lightbox-content img {
+  transform: scale(1);
+}
+
 /* Footer */
 .footer { text-align: center; padding: 3rem 0; color: var(--text-secondary); font-size: 0.9rem; border-top: 1px solid var(--glass-border); }
 
@@ -336,4 +521,5 @@ body {
   .hero-title { font-size: 3rem; }
   .card-top { flex-direction: column; gap: 1rem; }
   .project-header-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .design-gallery { height: 300px; } /* Mobilde daha küçük yükseklik */
 }

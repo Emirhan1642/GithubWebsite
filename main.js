@@ -186,4 +186,106 @@ async function initProjects() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', initProjects);
+document.addEventListener('DOMContentLoaded', () => {
+  initProjects();
+  initTabs();
+  initDesigns();
+  initLightbox();
+});
+
+// Tab Switching Logic
+function initTabs() {
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Remove active class from all buttons and contents
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked button and target content
+      btn.classList.add('active');
+      const targetId = btn.getAttribute('data-target');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+}
+
+// Render UI Designs
+async function initDesigns() {
+  const grid = document.getElementById('designs-grid');
+  
+  try {
+    const response = await fetch('/designs_data.json');
+    if (!response.ok) throw new Error('Could not load designs data.');
+    
+    const designs = await response.json();
+    if (designs.length === 0) {
+      grid.innerHTML = '<div class="loading-state">No designs found.</div>';
+      return;
+    }
+    grid.innerHTML = '';
+    
+    designs.forEach((design, index) => {
+      const designContainer = document.createElement('div');
+      designContainer.className = 'design-project animate-in';
+      // Careful with backticks and template literals in JSON strings, using single quotes for style
+      designContainer.style.animationDelay = (index * 0.2) + 's';
+      
+      const imagesHtml = design.images.map(img => 
+        `<div class="design-image-wrapper" onclick="openLightbox('${img}')"><img src="${img}" alt="UI Design" loading="lazy"></div>`
+      ).join('');
+
+      designContainer.innerHTML = `
+        <div class="design-header">
+          <h4>${design.title}</h4>
+          <p>${design.description}</p>
+        </div>
+        <div class="design-gallery">
+          ${imagesHtml}
+        </div>
+      `;
+      
+      grid.appendChild(designContainer);
+    });
+  } catch (error) {
+    console.error('Error rendering designs:', error);
+    grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load designs data.</div>';
+  }
+}
+
+// Lightbox Logic
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxClose = document.getElementById('lightbox-close');
+
+function initLightbox() {
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+      closeLightbox();
+    }
+  });
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+      closeLightbox();
+    }
+  });
+}
+
+// Global function to be called from onclick
+window.openLightbox = function(imgSrc) {
+  lightboxImg.src = imgSrc;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+};
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = 'auto'; // Restore scrolling
+  setTimeout(() => {
+    lightboxImg.src = '';
+  }, 400); // Wait for transition to finish
+}
