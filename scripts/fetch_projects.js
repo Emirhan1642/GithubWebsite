@@ -14,23 +14,15 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPOS = {
   'Nexus-Studio': {
     name: 'Nexus Studio',
-    desc: 'Advanced IDE and development environment for Next-Gen creators.'
+    desc: 'A next-generation, Vibe Coding-based game engine editor supporting C# and Luau. Designed entirely from scratch, it serves as the ultimate intersection of lightweight performance and premium quality for modern creators.'
   },
   'Nexus-Plugin': {
     name: 'Nexus Plugin',
-    desc: 'Core plugin system and extensions for the Nexus ecosystem.'
+    desc: 'A comprehensive plugin for Roblox Studio operating on a BYOK architecture. It provides full Studio access, enabling developers to build complete games without placing a single part manually. It integrates with Studio-MCP, utilizes custom tools, and features specialized skill files to maximize performance.'
   },
   'Linker': {
     name: 'Linker',
-    desc: 'High-performance API gateway and routing service.'
-  },
-  'Studio': {
-    name: 'Studio Core',
-    desc: 'The foundational engine and core components of Studio.'
-  },
-  'Roblox-Project': {
-    name: 'Roblox Experience',
-    desc: 'Custom Roblox experience leveraging Lua and external APIs.'
+    desc: 'A multifunctional social networking platform designed for offline communication. Leveraging a custom mesh and multi-hop architecture, it ensures seamless message and content delivery without internet access. Supports feeds, stories, and notes.'
   }
 };
 
@@ -93,8 +85,8 @@ async function fetchProjects() {
         id: data.id,
         name: repoName,
         displayName: config.name,
-        // Fallback to custom description if GitHub description is null
-        description: data.description || config.desc,
+        // Prioritize custom description over GitHub description
+        description: config.desc || data.description,
         url: data.html_url,
         isPrivate: data.private,
         // Primary language

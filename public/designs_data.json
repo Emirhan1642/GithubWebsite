@@ -2,7 +2,7 @@
   {
     "id": "nexus-studio-ui",
     "title": "Nexus Studio IDE",
-    "description": "Modern dark-themed IDE interface concept focusing on developer experience and productivity.",
+    "description": "A modern, dark-themed game engine interface concept, prioritizing developer experience, focus, and productivity.",
     "images": [
       "/NexusStudio/Logo.png",
       "/NexusStudio/Editor.png"
@@ -12,7 +12,7 @@
   {
     "id": "linker-ui",
     "title": "Linker Social Networking App",
-    "description": "A vibrant and dynamic social networking app UI designed for seamless connectivity and content sharing.",
+    "description": "A vibrant, dynamic, and highly modern mobile app UI designed for seamless offline social connectivity.",
     "images": [
       "/Linker/Logo.png",
       "/Linker/Chat.png",

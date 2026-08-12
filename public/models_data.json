@@ -1,0 +1,32 @@
+[
+  {
+    "id": "karambit",
+    "title": "Karambit",
+    "description": "A highly detailed, untextured 3D model of a Karambit knife, ready for material application and rendering.",
+    "model": "/Models/Karambit.glb"
+  },
+  {
+    "id": "portal",
+    "title": "Teleportation Portal",
+    "description": "A modern, sci-fi themed teleportation portal designed for futuristic environments.",
+    "model": "/Models/Portal.glb"
+  },
+  {
+    "id": "cauldron",
+    "title": "Magic Cauldron",
+    "description": "A charming cartoony magic cauldron complete with bubbling potion effects.",
+    "model": "/Models/Cauldron.glb"
+  },
+  {
+    "id": "lighthouse",
+    "title": "Cartoony Lighthouse",
+    "description": "A highly stylized, cartoony lighthouse perfect for coastal scenes.",
+    "model": "/Models/Lighthouse.glb"
+  },
+  {
+    "id": "magicHouse",
+    "title": "Wizard's House",
+    "description": "A whimsical and detailed cartoony wizard's house, featuring highly stylized architecture.",
+    "model": "/Models/MagicHouse.glb"
+  }
+]

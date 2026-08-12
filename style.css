@@ -378,6 +378,36 @@ body {
   gap: 4rem;
 }
 
+#models-grid.active {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+}
+
+/* 3D Model Card specific styles */
+.model-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.model-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -10px var(--accent-glow);
+  border-color: rgba(184, 41, 255, 0.3);
+}
+
+.model-card .design-header {
+  margin: 0;
+}
+
 /* UI Design Project Container */
 .design-project {
   display: flex;
@@ -440,11 +470,52 @@ body {
   border-color: rgba(184, 41, 255, 0.4);
 }
 
-.design-image-wrapper img {
+.design-image-wrapper img,
+.model-image-wrapper img {
   height: 100%;
   width: auto;
   display: block;
   transition: transform 0.5s ease;
+}
+
+/* 3D Model Image Wrapper */
+.model-image-wrapper {
+  width: 100%;
+  height: 250px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--glass-bg);
+}
+
+.model-image-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
+  border-color: rgba(184, 41, 255, 0.4);
+}
+
+.model-image-wrapper img {
+  width: 100%;
+  object-fit: cover; /* Cover the whole area for thumbnails */
+}
+
+.model-3d-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .design-image-wrapper:hover img {
@@ -467,12 +538,14 @@ body {
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 .lightbox.active {
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
 }
 
 .lightbox-close {

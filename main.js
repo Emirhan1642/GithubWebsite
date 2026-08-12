@@ -191,6 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initDesigns();
   initLightbox();
+  initModels();
+  init3DLightbox();
 });
 
 // Tab Switching Logic
@@ -288,4 +290,78 @@ function closeLightbox() {
   setTimeout(() => {
     lightboxImg.src = '';
   }, 400); // Wait for transition to finish
+}
+
+// Render 3D Models
+async function initModels() {
+  const grid = document.getElementById('models-grid');
+  
+  try {
+    const response = await fetch('/models_data.json');
+    if (!response.ok) throw new Error('Could not load models data.');
+    
+    const models = await response.json();
+    if (models.length === 0) {
+      grid.innerHTML = '<div class="loading-state">No models found.</div>';
+      return;
+    }
+    grid.innerHTML = '';
+    
+    models.forEach((model, index) => {
+      const modelContainer = document.createElement('div');
+      modelContainer.className = 'model-card animate-in';
+      modelContainer.style.animationDelay = (index * 0.2) + 's';
+      
+      modelContainer.innerHTML = `
+        <div class="model-image-wrapper" onclick="open3DLightbox('${model.model}')">
+          <model-viewer src="${model.model}" auto-rotate rotation-per-second="30deg" alt="3D Model Thumbnail" shadow-intensity="1" style="width: 100%; height: 100%; pointer-events: none; --poster-color: transparent;"></model-viewer>
+          <div class="model-3d-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          </div>
+        </div>
+        <div class="design-header">
+          <h4>${model.title}</h4>
+          <p>${model.description}</p>
+        </div>
+      `;
+      
+      grid.appendChild(modelContainer);
+    });
+  } catch (error) {
+    console.error('Error rendering models:', error);
+    grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load models data.</div>';
+  }
+}
+
+// 3D Lightbox Logic
+const lightbox3d = document.getElementById('lightbox-3d');
+const lightbox3dClose = document.getElementById('lightbox-3d-close');
+const modelViewerElement = document.getElementById('model-viewer-element');
+
+function init3DLightbox() {
+  lightbox3dClose.addEventListener('click', close3DLightbox);
+  lightbox3d.addEventListener('click', (e) => {
+    if (e.target === lightbox3d) {
+      close3DLightbox();
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox3d.classList.contains('active')) {
+      close3DLightbox();
+    }
+  });
+}
+
+window.open3DLightbox = function(modelSrc) {
+  modelViewerElement.src = modelSrc;
+  lightbox3d.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+function close3DLightbox() {
+  lightbox3d.classList.remove('active');
+  document.body.style.overflow = 'auto';
+  setTimeout(() => {
+    modelViewerElement.src = '';
+  }, 400);
 }
