@@ -1070,17 +1070,23 @@ body {
   .design-gallery { height: 300px; } /* Mobilde daha küçük yükseklik */
   
   .about-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
   }
   
   .profile-card {
     padding: 2rem 1.25rem;
+    min-width: 0;
   }
 
   .about-content {
     padding: 1.5rem;
     border-radius: 20px;
+    min-width: 0;
+  }
+
+  .contact-form {
+    padding: 1.5rem;
   }
 
   .social-links {
