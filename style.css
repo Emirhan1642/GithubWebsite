@@ -89,6 +89,34 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; }
   padding: 0 2rem;
 }
 
+/* Splash Screen */
+#splash-screen {
+  position: fixed; inset: 0; z-index: 99999;
+  background: var(--bg-color);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#splash-screen.hidden {
+  opacity: 0; visibility: hidden;
+}
+.splash-content {
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+.splash-loader {
+  width: 48px; height: 48px;
+  border: 3px solid rgba(184, 41, 255, 0.2);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.splash-text {
+  font-size: 1.5rem; font-weight: 700; color: var(--text-primary);
+  letter-spacing: 2px;
+}
+.splash-text span { color: var(--accent-color); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* Background Effects */
 .background-effects {
   position: fixed;
@@ -227,7 +255,45 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; }
 .hero { padding: 5rem 0 4rem; text-align: center; }
 .hero-title { font-size: 4rem; font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -2px; }
 .hero-title .highlight { color: var(--accent-color); text-shadow: 0 0 30px var(--accent-glow); }
-.hero-subtitle { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+/* Local Project Dashboard */
+.local-stats-dashboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 12px 24px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+.local-stats-dashboard .divider {
+  color: rgba(184, 41, 255, 0.4);
+}
+.local-stats-dashboard strong {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .local-stats-dashboard {
+    flex-wrap: wrap;
+    border-radius: 20px;
+    padding: 15px;
+    justify-content: center;
+  }
+}
 
 /* Typewriter Effect */
 .typewriter {

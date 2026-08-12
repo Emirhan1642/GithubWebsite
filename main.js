@@ -277,169 +277,175 @@ function getLanguageColor(language) {
 }
 
 // Render projects dynamically
+let cachedProjectsData = null;
 async function initProjects() {
   const grid = document.getElementById('projects-grid');
-  const filtersContainer = document.getElementById('project-filters');
+  if (!grid) return;
   
-  try {
-    const response = await fetch('/projects_data.json');
-    if (!response.ok) throw new Error('Could not load projects data.');
-    
-    const projects = await response.json();
-    if (projects.length === 0) {
-      grid.innerHTML = '<div class="loading-state" data-i18n="loading_projects">' + translations[currentLang].loading_projects + '</div>';
+  if (!cachedProjectsData) {
+    grid.innerHTML = `<div class="loading-spinner" data-i18n="loading_projects">${translations[currentLang].loading_projects}</div>`;
+    try {
+      const response = await fetch('./projects_data.json');
+      if (!response.ok) throw new Error('Could not load projects data.');
+      cachedProjectsData = await response.json();
+    } catch(e) {
+      console.error(e);
+      grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load projects.</div>';
       return;
     }
-    grid.innerHTML = '';
+  }
+
+  const projects = cachedProjectsData;
+  if (projects.length === 0) {
+    grid.innerHTML = '<div class="loading-state" data-i18n="loading_projects">' + translations[currentLang].loading_projects + '</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  
+  // Collect all unique languages
+  const uniqueLangs = new Set();
+  
+  projects.forEach((project, index) => {
+    // Gather languages for this project
+    let projectLangs = [];
+    if (project.allLanguages && project.allLanguages.length > 0) {
+      projectLangs = project.allLanguages;
+    } else if (project.language) {
+      projectLangs = [project.language];
+    }
+    projectLangs.forEach(l => uniqueLangs.add(l));
     
-    // Collect all unique languages
-    const uniqueLangs = new Set();
+    const isClickable = !project.isPrivate && project.url;
+    const card = document.createElement(isClickable ? 'a' : 'div');
+    card.className = `project-card animate-in ${isClickable ? 'is-public' : 'is-private'}`;
+    card.style.animationDelay = `${index * 0.15}s`;
+    card.setAttribute('data-lang', projectLangs.join(',').toLowerCase());
     
-    projects.forEach((project, index) => {
-      // Gather languages for this project
-      let projectLangs = [];
-      if (project.allLanguages && project.allLanguages.length > 0) {
-        projectLangs = project.allLanguages;
-      } else if (project.language) {
-        projectLangs = [project.language];
-      }
-      projectLangs.forEach(l => uniqueLangs.add(l));
-      
-      const isClickable = !project.isPrivate && project.url;
-      const card = document.createElement(isClickable ? 'a' : 'div');
-      card.className = `project-card animate-in ${isClickable ? 'is-public' : 'is-private'}`;
-      card.style.animationDelay = `${index * 0.15}s`;
-      card.setAttribute('data-lang', projectLangs.join(',').toLowerCase());
-      
-      if (isClickable) {
-        card.href = project.url;
-        card.target = "_blank";
-        card.rel = "noopener noreferrer";
-      }
+    if (isClickable) {
+      card.href = project.url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+    }
 
-      const projectDescriptionsTR = {
-        "Nexus-Plugin": "BYOK mimarisi üzerinde çalışan, Roblox Studio için kapsamlı bir eklenti. Tam Studio erişimi sağlayarak geliştiricilerin tek bir parçayı bile manuel olarak yerleştirmeden eksiksiz oyunlar geliştirmesine olanak tanır. Studio-MCP ile entegre çalışır, özel araçlar kullanır ve performansı en üst düzeye çıkarmak için özelleşmiş yetenek (skill) dosyaları içerir.",
-        "Nexus-Studio": "C# ve Luau'yu destekleyen yeni nesil, Vibe Coding tabanlı oyun motoru editörü. Tamamen sıfırdan tasarlanmış olup modern geliştiriciler için hafif performans ile yüksek kalitenin en üst düzeydeki kesişimini sunar.",
-        "Linker": "Çevrimdışı iletişim için tasarlanmış çok işlevli sosyal ağ platformu. Özel mesh ve çok atlamalı (multi-hop) ağ mimarisi sayesinde internet erişimi olmadan kesintisiz mesaj ve içerik iletimi sağlar. Akış, hikayeler ve notlar özelliklerini destekler."
-      };
+    const projectDescriptionsTR = {
+      "Nexus-Plugin": "BYOK mimarisi üzerinde çalışan, Roblox Studio için kapsamlı bir eklenti. Tam Studio erişimi sağlayarak geliştiricilerin tek bir parçayı bile manuel olarak yerleştirmeden eksiksiz oyunlar geliştirmesine olanak tanır. Studio-MCP ile entegre çalışır, özel araçlar kullanır ve performansı en üst düzeye çıkarmak için özelleşmiş yetenek (skill) dosyaları içerir.",
+      "Nexus-Studio": "C# ve Luau'yu destekleyen yeni nesil, Vibe Coding tabanlı oyun motoru editörü. Tamamen sıfırdan tasarlanmış olup modern geliştiriciler için hafif performans ile yüksek kalitenin en üst düzeydeki kesişimini sunar.",
+      "Linker": "Çevrimdışı iletişim için tasarlanmış çok işlevli sosyal ağ platformu. Özel mesh ve çok atlamalı (multi-hop) ağ mimarisi sayesinde internet erişimi olmadan kesintisiz mesaj ve içerik iletimi sağlar. Akış, hikayeler ve notlar özelliklerini destekler."
+    };
+    
+    const topicsHtml = project.topics && project.topics.length > 0 
+      ? `<div class="topics-container">${project.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}</div>`
+      : '';
       
-      const topicsHtml = project.topics && project.topics.length > 0 
-        ? `<div class="topics-container">${project.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}</div>`
-        : '';
-        
-      const commitsHtml = project.commits && project.commits.length > 0
-        ? `
-          <div class="commit-terminal">
-            <div class="terminal-header">
-              <div class="terminal-dot dot-red"></div>
-              <div class="terminal-dot dot-yellow"></div>
-              <div class="terminal-dot dot-green"></div>
-              <div class="terminal-title">${currentLang === 'tr' ? 'Son Commitler' : 'Recent Commits'}</div>
-            </div>
-            <div class="commit-list">
-              ${project.commits.map(c => `
-                <div class="commit-item">
-                  <span class="commit-sha">${c.sha}</span>
-                  <span class="commit-msg">${c.message}</span>
-                </div>
-              `).join('')}
-            </div>
+    const commitsHtml = project.commits && project.commits.length > 0
+      ? `
+        <div class="commit-terminal">
+          <div class="terminal-header">
+            <div class="terminal-dot dot-red"></div>
+            <div class="terminal-dot dot-yellow"></div>
+            <div class="terminal-dot dot-green"></div>
+            <div class="terminal-title">${currentLang === 'tr' ? 'Son Commitler' : 'Recent Commits'}</div>
           </div>
-        ` : '';
+          <div class="commit-list">
+            ${project.commits.map(c => `
+              <div class="commit-item">
+                <span class="commit-sha">${c.sha}</span>
+                <span class="commit-msg">${c.message}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : '';
 
-      let langsHtml = '';
-      if (projectLangs.length > 0) {
-        langsHtml = `
-          <div class="project-tags">
-            ${projectLangs.slice(0, 3).map(l => `<span class="tag">
-              <span class="lang-color" style="background: ${getLanguageColor(l)}"></span>${l}
-            </span>`).join('')}
-          </div>
-        `;
-      }
+    let langsHtml = '';
+    if (projectLangs.length > 0) {
+      langsHtml = `
+        <div class="project-tags">
+          ${projectLangs.slice(0, 3).map(l => `<span class="tag">
+            <span class="lang-color" style="background: ${getLanguageColor(l)}"></span>${l}
+          </span>`).join('')}
+        </div>
+      `;
+    }
 
-      card.innerHTML = `
-        <div class="card-top">
-          <div class="project-icon-wrapper">
-            ${getRepoIcon(project.name, project.language)}
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="project-icon-wrapper">
+          ${getRepoIcon(project.name, project.language)}
+        </div>
+        <div class="project-info">
+          <div class="project-header-row">
+            <h4 class="project-title">${project.displayName}</h4>
+            <div class="time-ago">${currentLang === 'tr' ? 'Güncellendi:' : 'Updated:'} ${timeAgo(project.pushedAt)}</div>
           </div>
-          <div class="project-info">
-            <div class="project-header-row">
-              <h4 class="project-title">${project.displayName}</h4>
-              <div class="time-ago">${currentLang === 'tr' ? 'Güncellendi:' : 'Updated:'} ${timeAgo(project.pushedAt)}</div>
+          
+          <div style="margin-bottom: 12px;">
+            <span class="privacy-badge ${project.isPrivate ? 'private' : 'public'}">
+              ${project.isPrivate ? (currentLang === 'tr' ? '🔒 Gizli' : '🔒 Private') : (currentLang === 'tr' ? '🌐 Herkese Açık' : '🌐 Public')}
+            </span>
+          </div>
+          
+          <p class="project-desc">${currentLang === 'tr' && projectDescriptionsTR[project.name] ? projectDescriptionsTR[project.name] : project.description}</p>
+          ${topicsHtml}
+          
+          <div class="stats-row">
+            ${langsHtml}
+            <div class="stat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              ${project.stats.stars}
             </div>
-            
-            <div style="margin-bottom: 12px;">
-              <span class="privacy-badge ${project.isPrivate ? 'private' : 'public'}">
-                ${project.isPrivate ? (currentLang === 'tr' ? '🔒 Gizli' : '🔒 Private') : (currentLang === 'tr' ? '🌐 Herkese Açık' : '🌐 Public')}
-              </span>
+            <div class="stat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              ${project.stats.watchers}
             </div>
-            
-            <p class="project-desc">${currentLang === 'tr' && projectDescriptionsTR[project.name] ? projectDescriptionsTR[project.name] : project.description}</p>
-            ${topicsHtml}
-            
-            <div class="stats-row">
-              ${langsHtml}
-              <div class="stat-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                ${project.stats.stars}
-              </div>
-              <div class="stat-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                ${project.stats.watchers}
-              </div>
-              <div class="stat-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                ${project.stats.forks}
-              </div>
+            <div class="stat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+              ${project.stats.forks}
             </div>
           </div>
         </div>
-        ${window.caseStudies[project.name] ? `
-          <button class="case-study-btn" onclick="openCaseStudy('${project.name}', '${project.url}', '${project.displayName.replace(/'/g, "\\'")}')">
-            ${currentLang === 'en' ? 'Case Study' : 'Projeyi İncele'}
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-        ` : ''}
-        ${commitsHtml}
-      `;
-      
-      grid.appendChild(card);
-    });
+      </div>
+      ${window.caseStudies[project.name] ? `
+        <button class="case-study-btn" onclick="event.preventDefault(); openCaseStudy('${project.name}', '${project.url}', '${project.displayName.replace(/'/g, "\\'")}')">
+          ${currentLang === 'en' ? 'Case Study' : 'Projeyi İncele'}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      ` : ''}
+      ${commitsHtml}
+    `;
     
-    // Create filters
-    if (filtersContainer && uniqueLangs.size > 0) {
-      const allLangs = Array.from(uniqueLangs).sort();
-      const allText = currentLang === 'tr' ? 'Tümü' : 'All';
-      let filterHTML = `<button class="filter-btn active" data-filter="all">${allText}</button>`;
-      allLangs.forEach(lang => {
-        filterHTML += `<button class="filter-btn" data-filter="${lang.toLowerCase()}">${lang}</button>`;
-      });
-      filtersContainer.innerHTML = filterHTML;
-      
-      const filterBtns = filtersContainer.querySelectorAll('.filter-btn');
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          
-          const filter = btn.getAttribute('data-filter');
-          const cards = grid.querySelectorAll('.project-card');
-          
-          cards.forEach(card => {
-            if (filter === 'all' || card.getAttribute('data-lang').includes(filter)) {
-              card.style.display = 'flex';
-            } else {
-              card.style.display = 'none';
-            }
-          });
+    grid.appendChild(card);
+  });
+  
+  // Create filters
+  if (uniqueLangs.size > 0) {
+    const filtersContainer = document.getElementById('project-filters');
+    const allLangs = Array.from(uniqueLangs).sort();
+    const allText = currentLang === 'tr' ? 'Tümü' : 'All';
+    let filterHTML = `<button class="filter-btn active" data-filter="all">${allText}</button>`;
+    allLangs.forEach(lang => {
+      filterHTML += `<button class="filter-btn" data-filter="${lang.toLowerCase()}">${lang}</button>`;
+    });
+    filtersContainer.innerHTML = filterHTML;
+    
+    const filterBtns = filtersContainer.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filter = btn.getAttribute('data-filter');
+        const cards = grid.querySelectorAll('.project-card');
+        
+        cards.forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-lang').includes(filter)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
         });
       });
-    }
-    
-  } catch (error) {
-    console.error('Error rendering projects:', error);
-    grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load projects. Ensure prebuild script ran successfully.</div>';
+    });
   }
 }
 
@@ -491,6 +497,13 @@ window.closeCaseStudy = function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Hide splash screen
+  const splash = document.getElementById('splash-screen');
+  if (splash) {
+    splash.classList.add('fade-out');
+    setTimeout(() => splash.remove(), 800);
+  }
+
   setLanguage(currentLang);
   initProjects();
   initTabs();
@@ -542,10 +555,10 @@ function initTypeWriter() {
   const currentWord = currentWords[typeIndex % currentWords.length];
   
   if (isDeleting) {
-    el.textContent = currentWord.substring(0, charIndex - 1);
+    el.innerHTML = currentWord.substring(0, charIndex - 1) || '&nbsp;';
     charIndex--;
   } else {
-    el.textContent = currentWord.substring(0, charIndex + 1);
+    el.innerHTML = currentWord.substring(0, charIndex + 1) || '&nbsp;';
     charIndex++;
   }
   
@@ -585,8 +598,8 @@ async function initGithubStats() {
           <div class="stat-label">${currentLang === 'tr' ? 'Fork' : 'Total Forks'}</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num">${stats.followers}</div>
-          <div class="stat-label">${currentLang === 'tr' ? 'Takipçi' : 'Followers'}</div>
+          <div class="stat-num">150+</div>
+          <div class="stat-label">${currentLang === 'tr' ? 'Commit' : 'Commits'}</div>
         </div>
       `;
     }
@@ -664,7 +677,7 @@ function initParticles() {
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = currentLang === 'en' ? 'rgba(184, 41, 255, 0.4)' : 'rgba(184, 41, 255, 0.4)'; // Theme independent
+      ctx.fillStyle = 'rgba(184, 41, 255, 0.4)';
       ctx.fill();
     }
   }
@@ -706,175 +719,161 @@ function initParticles() {
 function initTabs() {
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
-
-  function activateTab(targetId) {
-    tabBtns.forEach(b => {
-      if (b.getAttribute('data-target') === targetId) {
-        b.classList.add('active');
-        b.setAttribute('aria-selected', 'true');
-      } else {
+  
+  tabBtns.forEach(btn => {
+    // Click event
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      history.replaceState(null, null, '#' + targetId);
+      
+      tabBtns.forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
+      });
+      tabContents.forEach(c => c.classList.remove('active'));
+      
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      
+      const targetContent = document.getElementById(targetId);
+      if (targetContent) {
+        targetContent.classList.add('active', 'fade-in');
       }
     });
 
-    tabContents.forEach(c => c.classList.remove('active'));
-
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      // Remove animation class, trigger reflow, and add back for smooth transition
-      targetElement.classList.remove('fade-in');
-      void targetElement.offsetWidth; // trigger reflow
-      targetElement.classList.add('active', 'fade-in');
-    }
-  }
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-target');
-      window.location.hash = targetId;
-      activateTab(targetId);
+    // Keyboard event (Enter/Space to click)
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+      }
     });
   });
 
   // Handle initial hash on load
   const hash = window.location.hash.substring(1);
-  const isValidTab = Array.from(tabBtns).some(b => b.getAttribute('data-target') === hash);
-  if (hash && isValidTab) {
-    activateTab(hash);
-  } else {
-    activateTab('projects-wrapper'); // default
+  const targetBtn = document.querySelector(`[data-target="${hash}"]`);
+  if (targetBtn) {
+    targetBtn.click();
   }
-
-  // Handle hash change from back/forward buttons
-  window.addEventListener('hashchange', () => {
-    const newHash = window.location.hash.substring(1);
-    const valid = Array.from(tabBtns).some(b => b.getAttribute('data-target') === newHash);
-    if (newHash && valid) activateTab(newHash);
-  });
 }
 
 // Render UI Designs
+let cachedDesignsData = null;
 async function initDesigns() {
   const grid = document.getElementById('designs-grid');
+  if (!grid) return;
   
-  try {
-    const response = await fetch('/designs_data.json');
-    if (!response.ok) throw new Error('Could not load designs data.');
-    
-    const designs = await response.json();
-    if (designs.length === 0) {
-      grid.innerHTML = '<div class="loading-state">No designs found.</div>';
+  if (!cachedDesignsData) {
+    grid.innerHTML = `<div class="loading-spinner" data-i18n="loading_designs">${translations[currentLang].loading_designs}</div>`;
+    try {
+      const response = await fetch('/designs_data.json');
+      if (!response.ok) throw new Error('Could not load designs data.');
+      cachedDesignsData = await response.json();
+    } catch(e) {
+      console.error(e);
+      grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load designs data.</div>';
       return;
     }
-    grid.innerHTML = '';
-    
-    designs.forEach((design, index) => {
-      const designContainer = document.createElement('div');
-      designContainer.className = 'design-project animate-in';
-      designContainer.style.animationDelay = (index * 0.2) + 's';
-      
-      const imagesHtml = design.images.map(img => 
-        `<div class="design-image-wrapper" onclick="openLightbox('${img}')"><img src="${img}" alt="${design.title} Screenshot" loading="lazy"></div>`
-      ).join('');
-
-      const title = currentLang === 'tr' && design.title_tr ? design.title_tr : design.title;
-      const desc = currentLang === 'tr' && design.description_tr ? design.description_tr : design.description;
-
-      designContainer.innerHTML = `
-        <div class="design-header">
-          <h4>${title}</h4>
-          <p>${desc}</p>
-        </div>
-        <div class="gallery-wrapper">
-          <button class="gallery-nav-btn prev-btn" aria-label="Previous image">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          </button>
-          <div class="design-gallery">
-            ${imagesHtml}
-          </div>
-          <button class="gallery-nav-btn next-btn" aria-label="Next image">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
-        </div>
-      `;
-      
-      grid.appendChild(designContainer);
-
-      // Add navigation interactions
-      const gallery = designContainer.querySelector('.design-gallery');
-      const prevBtn = designContainer.querySelector('.prev-btn');
-      const nextBtn = designContainer.querySelector('.next-btn');
-      
-      if (prevBtn && nextBtn && gallery) {
-        const getItems = () => Array.from(gallery.querySelectorAll('.design-image-wrapper'));
-
-        prevBtn.addEventListener('click', () => {
-          const items = getItems();
-          if (items.length === 0) return;
-          const galleryCenter = gallery.scrollLeft + gallery.clientWidth / 2;
-          
-          let currentIndex = items.findIndex(item => {
-            const itemCenter = item.offsetLeft - gallery.offsetLeft + item.clientWidth / 2;
-            return itemCenter >= galleryCenter - 10; // -10 for floating point leniency
-          });
-          
-          if (currentIndex > 0) {
-            items[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          }
-        });
-
-        nextBtn.addEventListener('click', () => {
-          const items = getItems();
-          if (items.length === 0) return;
-          const galleryCenter = gallery.scrollLeft + gallery.clientWidth / 2;
-          
-          let currentIndex = items.findIndex(item => {
-            const itemCenter = item.offsetLeft - gallery.offsetLeft + item.clientWidth / 2;
-            return itemCenter > galleryCenter + 10;
-          });
-          
-          if (currentIndex !== -1) {
-            items[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          } else if (items.length > 0) {
-            items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          }
-        });
-      }
-
-      // Highlight centered item logic
-      const updateHighlight = () => {
-        const items = Array.from(gallery.querySelectorAll('.design-image-wrapper'));
-        if (items.length === 0) return;
-        
-        const galleryCenter = gallery.scrollLeft + gallery.clientWidth / 2;
-        let closestItem = null;
-        let minDistance = Infinity;
-        
-        items.forEach(item => {
-          const itemCenter = item.offsetLeft - gallery.offsetLeft + item.clientWidth / 2;
-          const distance = Math.abs(itemCenter - galleryCenter);
-          
-          if (distance < minDistance) {
-            minDistance = distance;
-            closestItem = item;
-          }
-          item.classList.remove('highlighted');
-        });
-        
-        if (closestItem) {
-          closestItem.classList.add('highlighted');
-        }
-      };
-
-      gallery.addEventListener('scroll', updateHighlight);
-      // Run once initially to highlight the first item (with a slight delay to allow rendering)
-      setTimeout(updateHighlight, 100);
-    });
-  } catch (error) {
-    console.error('Error rendering designs:', error);
-    grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load designs data.</div>';
   }
+
+  const designs = cachedDesignsData;
+  if (designs.length === 0) {
+    grid.innerHTML = '<div class="loading-state">No designs found.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  
+  designs.forEach((design, index) => {
+    const designContainer = document.createElement('div');
+    designContainer.className = 'design-project animate-in';
+    designContainer.style.animationDelay = (index * 0.2) + 's';
+    
+    const imagesHtml = design.images.map(img => 
+      `<div class="design-image-wrapper" onclick="openLightbox('${img}')"><img src="${img}" alt="${design.title} Screenshot" loading="lazy"></div>`
+    ).join('');
+
+    const title = currentLang === 'tr' && design.title_tr ? design.title_tr : design.title;
+    const desc = currentLang === 'tr' && design.description_tr ? design.description_tr : design.description;
+
+    designContainer.innerHTML = `
+      <div class="design-header">
+        <h4>${title}</h4>
+        <p>${desc}</p>
+      </div>
+      <div class="gallery-wrapper">
+        <button class="gallery-nav-btn prev-btn" aria-label="Previous image">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="design-gallery">
+          ${imagesHtml}
+        </div>
+        <button class="gallery-nav-btn next-btn" aria-label="Next image">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    `;
+    
+    grid.appendChild(designContainer);
+
+    // Add navigation interactions
+    const gallery = designContainer.querySelector('.design-gallery');
+    const prevBtn = designContainer.querySelector('.prev-btn');
+    const nextBtn = designContainer.querySelector('.next-btn');
+    
+    if (prevBtn && nextBtn && gallery) {
+      const getItems = () => Array.from(gallery.querySelectorAll('.design-image-wrapper'));
+
+      prevBtn.addEventListener('click', () => {
+        const items = getItems();
+        if (items.length === 0) return;
+        const galleryCenter = gallery.scrollLeft + gallery.clientWidth / 2;
+        
+        let currentIndex = items.findIndex(item => {
+          const itemCenter = item.offsetLeft - gallery.offsetLeft + item.clientWidth / 2;
+          return itemCenter >= galleryCenter - 10;
+        });
+        
+        if (currentIndex > 0) {
+          items[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        const items = getItems();
+        if (items.length === 0) return;
+        const galleryCenter = gallery.scrollLeft + gallery.clientWidth / 2;
+        
+        let currentIndex = items.findIndex(item => {
+          const itemCenter = item.offsetLeft - gallery.offsetLeft + item.clientWidth / 2;
+          return itemCenter > galleryCenter + 10;
+        });
+        
+        if (currentIndex !== -1) {
+          items[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else if (items.length > 0) {
+          items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      });
+    }
+
+    const updateHighlight = () => {
+      const items = Array.from(gallery.querySelectorAll('.design-image-wrapper'));
+      if (items.length === 0) return;
+      const galleryCenter = gallery.scrollLeft + gallery.clientWidth / 2;
+      let closestItem = null;
+      let minDistance = Infinity;
+      items.forEach(item => {
+        const itemCenter = item.offsetLeft - gallery.offsetLeft + item.clientWidth / 2;
+        const distance = Math.abs(itemCenter - galleryCenter);
+        if (distance < minDistance) { minDistance = distance; closestItem = item; }
+        item.classList.remove('highlighted');
+      });
+      if (closestItem) closestItem.classList.add('highlighted');
+    };
+    gallery.addEventListener('scroll', updateHighlight);
+    setTimeout(updateHighlight, 100);
+  });
 }
 
 // Lightbox Logic
@@ -889,7 +888,6 @@ function initLightbox() {
       closeLightbox();
     }
   });
-  // Close on Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && lightbox.classList.contains('active')) {
       closeLightbox();
@@ -897,7 +895,6 @@ function initLightbox() {
   });
 }
 
-// Global function to be called from onclick
 window.openLightbox = function(imgSrc) {
   lightboxImg.src = imgSrc;
   lightbox.classList.add('active');
@@ -916,47 +913,54 @@ function closeLightbox() {
 }
 
 // Render 3D Models
+let cachedModelsData = null;
 async function initModels() {
   const grid = document.getElementById('models-grid');
+  if (!grid) return;
   
-  try {
-    const response = await fetch('/models_data.json');
-    if (!response.ok) throw new Error('Could not load models data.');
-    
-    const models = await response.json();
-    if (models.length === 0) {
-      grid.innerHTML = '<div class="loading-state">No models found.</div>';
+  if (!cachedModelsData) {
+    grid.innerHTML = `<div class="loading-spinner" data-i18n="loading_models">${translations[currentLang].loading_models}</div>`;
+    try {
+      const response = await fetch('./models_data.json');
+      if (!response.ok) throw new Error('Could not load models data.');
+      cachedModelsData = await response.json();
+    } catch(e) {
+      console.error('Error rendering models:', e);
+      grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load models data.</div>';
       return;
     }
-    grid.innerHTML = '';
-    
-    models.forEach((model, index) => {
-      const modelContainer = document.createElement('div');
-      modelContainer.className = 'model-card animate-in';
-      modelContainer.style.animationDelay = (index * 0.2) + 's';
-      
-      const title = currentLang === 'tr' && model.title_tr ? model.title_tr : model.title;
-      const desc = currentLang === 'tr' && model.description_tr ? model.description_tr : model.description;
-
-      modelContainer.innerHTML = `
-        <div class="model-image-wrapper" onclick="open3DLightbox('${model.model}')">
-          <model-viewer src="${model.model}" auto-rotate rotation-per-second="30deg" alt="3D Model Thumbnail" shadow-intensity="1" style="width: 100%; height: 100%; pointer-events: none; --poster-color: transparent;"></model-viewer>
-          <div class="model-3d-badge">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-          </div>
-        </div>
-        <div class="design-header">
-          <h4>${title}</h4>
-          <p>${desc}</p>
-        </div>
-      `;
-      
-      grid.appendChild(modelContainer);
-    });
-  } catch (error) {
-    console.error('Error rendering models:', error);
-    grid.innerHTML = '<div class="loading-state" style="color: #ef4444;">Failed to load models data.</div>';
   }
+
+  const models = cachedModelsData;
+  if (models.length === 0) {
+    grid.innerHTML = '<div class="loading-state">No models found.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  
+  models.forEach((model, index) => {
+    const modelContainer = document.createElement('div');
+    modelContainer.className = 'model-card animate-in';
+    modelContainer.style.animationDelay = (index * 0.2) + 's';
+    
+    const title = currentLang === 'tr' && model.title_tr ? model.title_tr : model.title;
+    const desc = currentLang === 'tr' && model.description_tr ? model.description_tr : model.description;
+
+    modelContainer.innerHTML = `
+      <div class="model-image-wrapper" onclick="open3DLightbox('${model.model}')">
+        <model-viewer src="${model.model}" auto-rotate rotation-per-second="30deg" alt="3D Model Thumbnail" shadow-intensity="1" style="width: 100%; height: 100%; pointer-events: none; --poster-color: transparent;"></model-viewer>
+        <div class="model-3d-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+      </div>
+      <div class="design-header">
+        <h4>${title}</h4>
+        <p>${desc}</p>
+      </div>
+    `;
+    
+    grid.appendChild(modelContainer);
+  });
 }
 
 // 3D Lightbox Logic
