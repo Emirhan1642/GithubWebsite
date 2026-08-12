@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emirhan - Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2e3039;
+      --accent-color: #9300df; /* Keeping a subtle purple accent */
+      --text-color: #333333;
+      --text-light: #666666;
+      --bg-color: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f0f0; /* Darker background outside the paper */
+      color: var(--text-color);
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* A4 Paper Dimensions */
+    .a4-page {
+      background: var(--bg-color);
+      width: 210mm;
+      height: 297mm; /* Sabit A4 yüksekliği */
+      overflow: hidden; /* Taşmaları gizle */
+      padding: 20mm;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      position: relative;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 15mm;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      body {
+        background: none;
+        padding: 0;
+      }
+      .a4-page {
+        box-shadow: none;
+        width: 100%;
+        height: 100%;
+        min-height: auto;
+      }
+      /* Ensure colors print correctly */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 32pt;
+      color: var(--primary-color);
+      line-height: 1.2;
+      margin-bottom: 5px;
+      letter-spacing: -0.5px;
+    }
+
+    h2 {
+      font-size: 14pt;
+      color: var(--accent-color);
+      font-weight: 500;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    h3 {
+      font-size: 14pt;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 5px;
+    }
+
+    h4 {
+      font-size: 12pt;
+      color: var(--primary-color);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .date {
+      font-size: 10pt;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    p {
+      font-size: 10.5pt;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      text-align: justify;
+    }
+
+    ul {
+      list-style-type: none;
+      margin-bottom: 20px;
+    }
+
+    ul li {
+      font-size: 10.5pt;
+      color: var(--text-light);
+      margin-bottom: 6px;
+      position: relative;
+      padding-left: 15px;
+    }
+
+    ul li::before {
+      content: "•";
+      color: var(--accent-color);
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    /* Layout Sections */
+    .main-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .side-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-left: 1px solid #eee;
+      padding-left: 10mm;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .contact-item {
+      font-size: 9.5pt;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contact-item svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent-color);
+    }
+
+    .contact-item a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .skill-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge {
+      font-size: 9pt;
+      padding: 4px 10px;
+      background: #f4f4f5;
+      color: var(--primary-color);
+      border-radius: 4px;
+      font-weight: 500;
+      border: 1px solid #e4e4e7;
+    }
+
+    .language-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10pt;
+      color: var(--text-light);
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="a4-page">
+    
+    <!-- Main Column (Left) -->
+    <div class="main-col">
+      <header>
+        <h1>Emirhan İnan</h1>
+        <h2>Yazılım Geliştirici & 3D Sanatçısı</h2>
+      </header>
+
+      <section>
+        <h3>Kariyer Özeti</h3>
+        <p>
+          Yeni nesil oyun motorları ve sosyal ağ platformları geliştiren bir yazılım geliştiricisi ve 3D sanatçısıyım. Son zamanlarda, güçlü yapay zeka araçlarını (Claude, Codex, Antigravity) kullanarak karmaşık sistemleri hızla prototiplemeye olanak tanıyan <strong>Vibe Coding</strong> yaklaşımını benimsedim. Yüksek performanslı dijital deneyimler yaratmak için güçlü programlama altyapısını sanatsal vizyonla harmanlıyorum.
+        </p>
+      </section>
+
+      <section>
+        <h3>Deneyim & Yolculuk</h3>
+        
+        <div class="experience-item">
+          <h4>Nexus Studio <span class="date">2026 - Günümüz</span></h4>
+          <p><strong>Kurucu & Baş Geliştirici</strong></p>
+          <ul>
+            <li>C# ve Luau destekli, optimize edilmiş hafif bir mimariye sahip Vibe Coding tabanlı oyun motoru editörünü sıfırdan geliştirdim.</li>
+            <li>Geliştirici üretkenliğini ve modern estetiği en üst düzeye çıkaran özel bir UI/UX sistemi tasarladım.</li>
+          </ul>
+        </div>
+
+        <div class="experience-item">
+          <h4>Linker <span class="date">2025 - Günümüz</span></h4>
+          <p><strong>Kurucu & Full-Stack Geliştirici</strong></p>
+          <ul>
+            <li>Kullanıcıların internet erişimi olmadan içerik ve hikaye paylaşabilmesini sağlayan, özel mesh ağ mimarisine sahip çok işlevli bir sosyal medya platformu geliştirdim.</li>
+          </ul>
+        </div>
+
+        <div class="experience-item">
+          <h4>Roblox Oyun Geliştirme <span class="date">2021 - 2024</span></h4>
+          <p><strong>Oyun Geliştirici & 3D Çevre Sanatçısı</strong></p>
+          <ul>
+            <li>Blender ve Substance Painter kullanarak optimize edilmiş, stilize 3D ortamlar hazırladım ve gelişmiş Luau programlama ile interaktif deneyimler geliştirdim.</li>
+            <li>Vibe Coding iş akışlarını mümkün kılan, BYOK mimarili Roblox Studio eklentisi "Nexus-Plugin"i ürettim.</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Side Column (Right) -->
+    <div class="side-col">
+      
+      <section class="contact-info">
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <a href="mailto:1642emirhan@gmail.com">1642emirhan@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Turkey / Bursa</span>
+        </div>
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          <a href="https://github.com/Emirhan1642">github.com/Emirhan1642</a>
+        </div>
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          <a href="https://linkedin.com/in/emirhan1642">in/emirhan1642</a>
+        </div>
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>
+          <a href="https://x.com/16Emirhan42">@16Emirhan42</a>
+        </div>
+      </section>
+
+      <section>
+        <h3>Teknolojiler</h3>
+        <div class="skill-badges">
+          <span class="badge">Luau</span>
+          <span class="badge">Kotlin</span>
+          <span class="badge">C++</span>
+          <span class="badge">JavaScript</span>
+          <span class="badge">HTML/CSS</span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Tasarım & AI Araçları</h3>
+        <div class="skill-badges">
+          <span class="badge">Blender</span>
+          <span class="badge">Figma</span>
+          <span class="badge">Substance Painter</span>
+          <span class="badge">Photoshop</span>
+          <span class="badge">Antigravity</span>
+          <span class="badge">Claude</span>
+          <span class="badge">Codex</span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Diller</h3>
+        <div class="language-item">
+          <span>Türkçe</span>
+          <strong>Anadil</strong>
+        </div>
+        <div class="language-item">
+          <span>İngilizce</span>
+          <strong>B1 (Orta)</strong>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -2,17 +2,20 @@
   {
     "id": "nexus-studio-ui",
     "title": "Nexus Studio IDE",
+    "title_tr": "Nexus Studio IDE",
     "description": "A modern, dark-themed game engine interface concept, prioritizing developer experience, focus, and productivity.",
+    "description_tr": "Geliştirici deneyimini, odaklanmayı ve üretkenliği ön planda tutan modern, karanlık temalı bir oyun motoru arayüzü konsepti.",
     "images": [
       "/NexusStudio/Logo.png",
       "/NexusStudio/Editor.png"
     ]
   },
-
   {
     "id": "linker-ui",
     "title": "Linker Social Networking App",
+    "title_tr": "Linker Sosyal Ağ Uygulaması",
     "description": "A vibrant, dynamic, and highly modern mobile app UI designed for seamless offline social connectivity.",
+    "description_tr": "Kesintisiz çevrimdışı sosyal etkileşim için tasarlanmış canlı, dinamik ve son derece modern mobil uygulama arayüzü.",
     "images": [
       "/Linker/Logo.png",
       "/Linker/Chat.png",
@@ -25,7 +28,5 @@
       "/Linker/SearchUser.png",
       "/Linker/Story.png"
     ]
-    
-
   }
 ]

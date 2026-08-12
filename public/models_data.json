@@ -2,31 +2,41 @@
   {
     "id": "karambit",
     "title": "Karambit",
+    "title_tr": "Karambit",
     "description": "A highly detailed, untextured 3D model of a Karambit knife, ready for material application and rendering.",
+    "description_tr": "Materyal uygulaması ve render için hazır, son derece detaylı, kaplamasız Karambit bıçağı 3D modeli.",
     "model": "/Models/Karambit.glb"
   },
   {
     "id": "portal",
     "title": "Teleportation Portal",
+    "title_tr": "Işınlanma Portalı",
     "description": "A modern, sci-fi themed teleportation portal designed for futuristic environments.",
+    "description_tr": "Fütüristik ortamlar için tasarlanmış modern, bilim kurgu temalı ışınlanma portalı.",
     "model": "/Models/Portal.glb"
   },
   {
     "id": "cauldron",
     "title": "Magic Cauldron",
+    "title_tr": "Sihirli Kazan",
     "description": "A charming cartoony magic cauldron complete with bubbling potion effects.",
+    "description_tr": "Fokurdayan iksir efektleriyle tamamlanmış, büyüleyici, çizgi film tarzı sihirli kazan.",
     "model": "/Models/Cauldron.glb"
   },
   {
     "id": "lighthouse",
     "title": "Cartoony Lighthouse",
+    "title_tr": "Çizgi Film Tarzı Deniz Feneri",
     "description": "A highly stylized, cartoony lighthouse perfect for coastal scenes.",
+    "description_tr": "Sahil sahneleri için mükemmel, son derece stilize edilmiş çizgi film tarzı deniz feneri.",
     "model": "/Models/Lighthouse.glb"
   },
   {
     "id": "magicHouse",
     "title": "Wizard's House",
+    "title_tr": "Büyücü Evi",
     "description": "A whimsical and detailed cartoony wizard's house, featuring highly stylized architecture.",
+    "description_tr": "Son derece stilize mimariye sahip, ilginç ve detaylı çizgi film tarzı büyücü evi.",
     "model": "/Models/MagicHouse.glb"
   }
 ]
