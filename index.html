@@ -2,10 +2,15 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Emirhan | Portfolio</title>
-    <meta name="description" content="Personal portfolio and projects showcase." />
+    <meta name="description" content="Emirhan - Software Developer & 3D Artist Portfolio" />
+    <meta property="og:title" content="Emirhan | Software Developer & 3D Artist" />
+    <meta property="og:description" content="Building next-generation game engines, social networking platforms, and creating stylized 3D environments. Powered by Vibe Coding." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/profile.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,6 +18,7 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
   </head>
   <body>
+    <div id="mouse-glow"></div>
     <div class="background-effects">
       <div class="glow-orb orb-1"></div>
       <div class="glow-orb orb-2"></div>
@@ -86,6 +92,11 @@
               </div>
               <h2 class="profile-name">Emirhan</h2>
               <p class="profile-tagline">Software Developer & 3D Artist</p>
+
+              <div class="live-status">
+                <span class="status-dot"></span>
+                <span>Open for freelance work</span>
+              </div>
               
               <div class="profile-details">
                 <div class="detail-item">
@@ -100,6 +111,13 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                   <span>Location: Türkiye/Bursa</span>
                 </div>
+              </div>
+
+              <div class="cv-download-wrapper">
+                <a href="/resume.pdf" target="_blank" class="cv-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Download CV
+                </a>
               </div>
 
               <div class="social-links">
@@ -142,6 +160,14 @@
                   <span class="skill-tag">Antigravity</span>
                   <span class="skill-tag">Claude</span>
                   <span class="skill-tag">Codex</span>
+                </div>
+              </div>
+
+              <div class="about-section-block">
+                <h3>Languages</h3>
+                <div class="skills-grid">
+                  <span class="skill-tag lang-tag">Turkish (Native)</span>
+                  <span class="skill-tag lang-tag">English (B1)</span>
                 </div>
               </div>
 
@@ -191,6 +217,35 @@
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <div class="about-section-block">
+                <h3>GitHub Contributions</h3>
+                <div class="github-chart-container">
+                  <img src="https://ghchart.rshah.org/b829ff/Emirhan1642" alt="Emirhan's GitHub Contributions" loading="lazy" />
+                </div>
+              </div>
+
+              <div class="about-section-block">
+                <h3>Get In Touch</h3>
+                <form class="contact-form" action="https://formspree.io/f/xpparqep" method="POST">
+                  <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="John Doe" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="john@example.com" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Hello Emirhan, let's build something great..." required></textarea>
+                  </div>
+                  <button type="submit" class="submit-btn">
+                    Send Message
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </button>
+                </form>
               </div>
 
             </div>

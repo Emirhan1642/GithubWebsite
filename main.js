@@ -1,7 +1,9 @@
 import { inject } from '@vercel/analytics';
+import { injectSpeedInsights } from '@vercel/speed-insights';
 
-// Initialize Vercel Analytics
+// Initialize Vercel Analytics & Speed Insights
 inject();
+injectSpeedInsights();
 
 // Theme Toggle Logic
 const themeToggleBtn = document.getElementById('theme-toggle');
@@ -195,6 +197,12 @@ document.addEventListener('DOMContentLoaded', () => {
   init3DLightbox();
 });
 
+// Interactive Mouse Glow (Dynamic Background)
+document.addEventListener('mousemove', (e) => {
+  document.body.style.setProperty('--mouse-x', `${e.clientX}px`);
+  document.body.style.setProperty('--mouse-y', `${e.clientY}px`);
+});
+
 // Tab Switching Logic
 function initTabs() {
   const tabBtns = document.querySelectorAll('.tab-btn');
@@ -209,7 +217,13 @@ function initTabs() {
       // Add active class to clicked button and target content
       btn.classList.add('active');
       const targetId = btn.getAttribute('data-target');
-      document.getElementById(targetId).classList.add('active');
+      const targetElement = document.getElementById(targetId);
+      
+      // Remove animation class, trigger reflow, and add back for smooth transition
+      targetElement.classList.remove('fade-in');
+      void targetElement.offsetWidth; // trigger reflow
+      
+      targetElement.classList.add('active', 'fade-in');
     });
   });
 }
