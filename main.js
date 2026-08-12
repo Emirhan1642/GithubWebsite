@@ -24,11 +24,45 @@ themeToggleBtn.addEventListener('click', () => {
   localStorage.setItem('theme', newTheme);
 });
 
+// Sound Toggle Logic
+const soundToggle = document.getElementById('sound-toggle');
+const ambientAudio = document.getElementById('ambient-audio');
+const soundIconOff = document.getElementById('sound-icon-off');
+const soundIconOn = document.getElementById('sound-icon-on');
+
+if (soundToggle && ambientAudio) {
+  ambientAudio.volume = 0.2; // Soft volume
+  soundToggle.addEventListener('click', () => {
+    if (ambientAudio.paused) {
+      ambientAudio.play().catch(e => console.log("Audio play failed:", e));
+      if (soundIconOff) soundIconOff.style.display = 'none';
+      if (soundIconOn) soundIconOn.style.display = 'block';
+    } else {
+      ambientAudio.pause();
+      if (soundIconOn) soundIconOn.style.display = 'none';
+      if (soundIconOff) soundIconOff.style.display = 'block';
+    }
+  });
+}
+
+// Calculate age dynamically
+function calculateAge(birthDateString) {
+  const birthDate = new Date(birthDateString);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+  }
+  return age;
+}
+const currentAge = calculateAge('2008-12-10');
+
 // --- i18n Translation System ---
 const translations = {
   en: {
     title_portfolio: 'Emirhan | Portfolio',
-    hero_title: 'Crafting <span class="highlight">Digital</span> Experiences',
+    hero_title_prefix: 'Crafting',
     hero_subtitle: 'Building robust and scalable solutions. Showcasing my private workspace projects powered by static build architecture.',
     tab_code_text: 'Code Projects',
     tab_designs_text: 'UI Designs',
@@ -40,7 +74,7 @@ const translations = {
     profile_tagline: 'Software Developer & 3D Artist',
     status_open: 'Open for freelance work',
     detail_born: 'Born: 10/12/2008',
-    detail_age: 'Age: 17',
+    detail_age: `Age: ${currentAge}`,
     detail_location: 'Location: Türkiye/Bursa',
     download_cv: 'Download CV',
     about_me_title: 'About Me',
@@ -66,7 +100,7 @@ const translations = {
   },
   tr: {
     title_portfolio: 'Emirhan | Portfolyo',
-    hero_title: '<span class="highlight">Dijital</span> Deneyimler Üretmek',
+    hero_title_prefix: 'Geliştiriyorum:',
     hero_subtitle: 'Sağlam ve ölçeklenebilir çözümler geliştiriyorum. Statik derleme mimarisiyle güçlendirilmiş özel çalışma alanı projelerimi sergiliyorum.',
     tab_code_text: 'Kod Projeleri',
     tab_designs_text: 'UI Tasarımları',
@@ -78,7 +112,7 @@ const translations = {
     profile_tagline: 'Yazılım Geliştirici & 3D Sanatçısı',
     status_open: 'Freelance işlere açık',
     detail_born: 'Doğum: 10/12/2008',
-    detail_age: 'Yaş: 17',
+    detail_age: `Yaş: ${currentAge}`,
     detail_location: 'Konum: Türkiye/Bursa',
     download_cv: 'CV İndir',
     about_me_title: 'Hakkımda',
@@ -116,12 +150,57 @@ function setLanguage(lang) {
   
   document.title = translations[lang].title_portfolio;
 
+  // --- Case Studies Content ---
+  const caseStudies = {
+    'Nexus-Studio': {
+      en: {
+        problem: 'There was a need for a next-generation game engine editor supporting C# and Luau, tailored for modern developers that is both lightweight and high-performance, yet premium quality. The clunky nature of standard market solutions made it difficult to establish a flexible and fluid workspace.',
+        challenges: '<ul><li>Instead of tying the core architecture to heavy, pre-built tools, a fully customized, lightweight, and high-performance UI/infrastructure layer was built.</li><li>When bridging the editor UI and the render engine, a modular system was designed for asynchronous and lossless data communication.</li><li>Integrating multi-language support (C# and Luau) and core modules like Asset Browser and Material Editor into a single, flexible "docking" ecosystem without performance loss was one of the biggest engineering hurdles.</li></ul>',
+        result: 'Developers are provided with a professional-grade game engine editor that is exceptionally smooth, intuitive, and fully customizable to their own workflows. With its superior performance, modular architecture, and modern design, a scalable and robust foundation was deployed, capable of easily supporting massive future engine features.'
+      },
+      tr: {
+        problem: 'Modern geliştiriciler için (Vibe Coding konseptine uygun), hem hafif ve performanslı hem de yüksek kaliteli, C# ve Luau destekli yeni nesil bir oyun motoru editörüne ihtiyaç vardı. Piyasada bulunan standart çözümlerin hantal yapısı, esnek ve akıcı bir çalışma alanı kurmayı zorlaştırıyordu.',
+        challenges: '<ul><li>Motorun temel mimarisini ağır ve hazır araçlara bağlamak yerine, tamamen özelleştirilmiş, hafif ve yüksek performanslı bir arayüz/altyapı katmanı inşa edildi.</li><li>Editör arayüzü ile render motoru arasındaki köprüyü kurarken veri iletişimini asenkron ve kayıpsız yapacak bir modüler sistem tasarlandı.</li><li>Çoklu dil desteğini (C# ve Luau) ve temel oyun geliştirme modüllerini, performans kaybı yaşatmadan tek bir esnek "docking" (yerleştirilebilir pencere) ekosisteminde entegre etmek en büyük mühendislik zorluklarından biriydi.</li></ul>',
+        result: 'Geliştiricilere son derece pürüzsüz, sezgisel ve tamamen kendi iş akışlarına göre özelleştirebilecekleri, profesyonel kalitede bir oyun motoru editörü sunuldu. Üstün performansı, modüler yapısı ve modern tasarımıyla gelecekte eklenecek devasa motor özelliklerini rahatlıkla kaldırabilecek, ölçeklenebilir ve sağlam bir altyapı canlıya alındı.'
+      }
+    },
+    'Nexus-Plugin': {
+      en: {
+        problem: 'Game development workflows (especially in Roblox Studio) are highly time-consuming and require constant context switching between windows. Our core goal was to take an external AI and embed it directly into the heart of the game engine. We wanted the AI to evolve from a simple external code-suggestion chatbot into a "true assistant" that can see scenes, recognize objects, and intervene directly within the game.',
+        challenges: '<ul><li><b>Connecting Two Worlds:</b> We built a bridge enabling instant and secure communication between web-based AI models and the closed ecosystem of the game engine.</li><li><b>Managing Context:</b> We built an intelligent filtering system that extracts only the relevant information the user needs at that moment.</li><li><b>Security and Autonomy:</b> We designed a secure "think and execute" loop that oversees its actions, allowing it to detect and self-correct errors.</li></ul>',
+        result: 'Developers can now use any AI model directly inside Roblox Studio without leaving it. The AI can place objects in the scene, write code from scratch, and fix bugs. We created a fully equipped, intelligent coworker for Roblox developers, making complex processes much faster and more manageable.'
+      },
+      tr: {
+        problem: 'Oyun geliştirme süreçleri (özellikle Roblox Studio içinde) oldukça zaman alıcıdır ve sürekli farklı pencereler arasında geçiş yapmayı gerektirir. Çözmeye çalıştığımız temel problem; dışarıdaki bir yapay zekayı alıp, doğrudan oyun motorunun kalbine yerleştirmekti. Yani yapay zekanın sadece dışarıdan kod öneren bir sohbet botu olmaktan çıkıp, "gerçek bir asistan" olmasını sağlamaktı.',
+        challenges: '<ul><li><b>İki Farklı Dünyayı Konuşturmak:</b> Yapay zeka modelleri ile kapalı ekosisteme sahip oyun motorunun anlık, güvenli ve kopuksuz bir şekilde iletişim kurmasını sağlayacak bir köprü inşa edildi.</li><li><b>Bağlamı (Context) Yönetmek:</b> Yapay zekanın sadece o an kullanıcının neye ihtiyacı olduğunu anlayıp, yalnızca gerekli bilgileri çekmesini sağlayan zeki bir filtreleme sistemi kuruldu.</li><li><b>Güvenlik ve Otonomi:</b> Yapay zekanın oyuna müdahale ederken projeyi bozmasını engellemek için, onun attığı her adımı denetleyen, kendi kendine hataları düzeltebilmesini sağlayan güvenli bir döngü tasarlandı.</li></ul>',
+        result: 'Artık geliştiriciler, Roblox Studio\'dan hiç ayrılmadan istedikleri herhangi bir yapay zeka modelini doğrudan oyun motorunun içinde kullanabiliyorlar. Yapay zeka; sizin için sahneye objeler yerleştirebiliyor, sıfırdan kodlar yazabiliyor, hatalı kodları inceleyip düzeltebiliyor. Tam donanımlı, akıllı bir çalışma arkadaşı yaratmış olduk.'
+      }
+    },
+    'Linker': {
+      en: {
+        problem: 'The biggest weakness of traditional social media apps is their reliance on an internet connection. We aimed to eliminate the "no internet, no communication" problem and establish an uninterrupted communication network that works under any condition.',
+        challenges: '<ul><li><b>Offline Communication Network:</b> We established a stable mesh network where devices find each other without internet servers, hopping messages from device to device.</li><li><b>Data Security:</b> We integrated top-tier security and encryption infrastructure to guarantee data cannot be read or altered in transit.</li><li><b>Performance & Battery:</b> Heavy optimizations were made so that the app doesn\'t rapidly drain the battery while scanning in the background.</li><li><b>Seamless Transition:</b> We developed a synchronization mechanism that quietly switches systems when internet connectivity is gained or lost.</li></ul>',
+        result: 'A hybrid social media platform that works flawlessly both online and offline was created. It guarantees uninterrupted communication even without internet, featuring a highly optimized lightweight architecture and end-to-end secure message transfer.'
+      },
+      tr: {
+        problem: 'Geleneksel sosyal medya uygulamalarının en büyük zayıflığı internet bağlantısına bağımlı olmalarıdır. Bir konserde, afet anlarında veya ağın çekmediği durumlarda iletişim durur. Linker, "İnternet yoksa iletişim de yok" problemini ortadan kaldırmayı hedefleyerek yola çıktı.',
+        challenges: '<ul><li><b>Çevrimdışı İletişim Ağı Kurmak:</b> İnternet sunucuları olmadan cihazların birbirini bulması ve mesajların cihazdan cihaza atlayarak iletilmesi sağlandı.</li><li><b>Veri Güvenliği ve Gizlilik:</b> Mesajlar tanınmayan cihazlar üzerinden sektiği için, verilerin yoldayken okunmamasını garanti altına alacak üst düzey bir güvenlik altyapısı kuruldu.</li><li><b>Cihaz Performansı ve Pil:</b> Arka planda iletişim kuran uygulamanın telefonun şarjını hızla tüketmemesi için uygulama çok hafif çalışacak şekilde optimize edildi.</li><li><b>Kusursuz Geçiş:</b> İnternet bağlantısı geldiğinde ve gittiğinde arka planda sistem değiştiren ve verileri senkronize eden bir mekanizma kuruldu.</li></ul>',
+        result: 'Hem çevrimiçi hem de çevrimdışı sorunsuz çalışabilen hibrit bir sosyal medya platformu ortaya çıkarıldı. Kesintisiz iletişim, yüksek performans ve tam güvenlik sağlandı. Linker; pili verimli kullanan ve internet kesintilerinden etkilenmeyen yenilikçi bir sosyal ağ olarak başarıyla hayata geçirilmiştir.'
+      }
+    }
+  };
+
+  window.caseStudies = caseStudies; // Expose to window for global onclick handlers
+
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (translations[lang][key]) {
       el.innerHTML = translations[lang][key];
     }
   });
+
+  // Re-start typewriter on language change
+  initTypeWriter();
 
   const cvLink = document.getElementById('cv-link');
   if (cvLink) {
@@ -131,9 +210,13 @@ function setLanguage(lang) {
   // Re-render dynamic content when language changes
   // Check if grid exists to avoid issues before DOM load
   if (document.getElementById('projects-grid')) {
-    initProjects();
-    initDesigns();
-    initModels();
+    Promise.all([
+      initProjects(),
+      initDesigns(),
+      initModels()
+    ]).then(() => {
+      initHorizontalScroll();
+    });
   }
 }
 
@@ -152,16 +235,16 @@ function timeAgo(dateString) {
   const seconds = Math.floor((now - date) / 1000);
   
   let interval = seconds / 31536000;
-  if (interval > 1) return Math.floor(interval) + (currentLang === 'tr' ? ' yıl önce' : ' years ago');
+  if (Math.floor(interval) >= 1) return Math.floor(interval) + (currentLang === 'tr' ? ' yıl önce' : (Math.floor(interval) === 1 ? ' year ago' : ' years ago'));
   interval = seconds / 2592000;
-  if (interval > 1) return Math.floor(interval) + (currentLang === 'tr' ? ' ay önce' : ' months ago');
+  if (Math.floor(interval) >= 1) return Math.floor(interval) + (currentLang === 'tr' ? ' ay önce' : (Math.floor(interval) === 1 ? ' month ago' : ' months ago'));
   interval = seconds / 86400;
-  if (interval > 1) return Math.floor(interval) + (currentLang === 'tr' ? ' gün önce' : ' days ago');
+  if (Math.floor(interval) >= 1) return Math.floor(interval) + (currentLang === 'tr' ? ' gün önce' : (Math.floor(interval) === 1 ? ' day ago' : ' days ago'));
   interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + (currentLang === 'tr' ? ' saat önce' : ' hours ago');
+  if (Math.floor(interval) >= 1) return Math.floor(interval) + (currentLang === 'tr' ? ' saat önce' : (Math.floor(interval) === 1 ? ' hour ago' : ' hours ago'));
   interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + (currentLang === 'tr' ? ' dakika önce' : ' minutes ago');
-  return Math.floor(seconds) + (currentLang === 'tr' ? ' saniye önce' : ' seconds ago');
+  if (Math.floor(interval) >= 1) return Math.floor(interval) + (currentLang === 'tr' ? ' dakika önce' : (Math.floor(interval) === 1 ? ' minute ago' : ' minutes ago'));
+  return Math.floor(seconds) + (currentLang === 'tr' ? ' saniye önce' : (Math.floor(seconds) === 1 ? ' second ago' : ' seconds ago'));
 }
 
 // Map repo names to specific SVG icons
@@ -266,11 +349,13 @@ async function initProjects() {
 
       let langsHtml = '';
       if (projectLangs.length > 0) {
-        langsHtml = projectLangs.map(lang => `
-          <div class="stat-item">
-            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${getLanguageColor(lang)}"></span> ${lang}
+        langsHtml = `
+          <div class="project-tags">
+            ${projectLangs.slice(0, 3).map(l => `<span class="tag">
+              <span class="lang-color" style="background: ${getLanguageColor(l)}"></span>${l}
+            </span>`).join('')}
           </div>
-        `).join('');
+        `;
       }
 
       card.innerHTML = `
@@ -310,6 +395,12 @@ async function initProjects() {
             </div>
           </div>
         </div>
+        ${window.caseStudies[project.name] ? `
+          <button class="case-study-btn" onclick="openCaseStudy('${project.name}', '${project.url}', '${project.displayName.replace(/'/g, "\\'")}')">
+            ${currentLang === 'en' ? 'Case Study' : 'Projeyi İncele'}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        ` : ''}
         ${commitsHtml}
       `;
       
@@ -352,18 +443,77 @@ async function initProjects() {
   }
 }
 
+// Global Case Study Modal functions
+window.openCaseStudy = function(projectId, repoUrl, title) {
+  const modal = document.getElementById('case-study-modal');
+  if (!modal || !window.caseStudies[projectId]) return;
+  
+  const study = window.caseStudies[projectId][currentLang];
+  
+  document.getElementById('cs-title').textContent = title;
+  document.getElementById('cs-github-link').href = repoUrl;
+  
+  document.getElementById('cs-problem-title').textContent = currentLang === 'en' ? 'Problem' : 'Problem';
+  document.getElementById('cs-problem-text').innerHTML = study.problem;
+  
+  document.getElementById('cs-solution-title').textContent = currentLang === 'en' ? 'Technical Challenges Overcome' : 'Aşılan Teknik Zorluklar';
+  document.getElementById('cs-solution-text').innerHTML = study.challenges;
+  
+  document.getElementById('cs-result-title').textContent = currentLang === 'en' ? 'Result' : 'Sonuç';
+  document.getElementById('cs-result-text').innerHTML = study.result;
+  
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden'; // Prevent scrolling
+  
+  // Trigger animation
+  const content = modal.querySelector('.modal-content');
+  content.style.opacity = '0';
+  content.style.transform = 'translateY(20px)';
+  setTimeout(() => {
+    content.style.transition = 'all 0.3s ease';
+    content.style.opacity = '1';
+    content.style.transform = 'translateY(0)';
+  }, 10);
+};
+
+window.closeCaseStudy = function() {
+  const modal = document.getElementById('case-study-modal');
+  if (!modal) return;
+  
+  const content = modal.querySelector('.modal-content');
+  content.style.opacity = '0';
+  content.style.transform = 'translateY(20px)';
+  
+  setTimeout(() => {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
+  }, 300);
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   setLanguage(currentLang);
   initProjects();
   initTabs();
   initDesigns();
+  initHorizontalScroll();
   initLightbox();
-  initModels();
   init3DLightbox();
   initContactForm();
-  initHorizontalScroll();
+  initGithubStats();
+  initScrollAnimations();
+  initCursor();
+  initParticles();
   initScrollTop();
 });
+
+// Unregister Service Worker (fixes dev mode caching issues)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
 
 // Interactive Mouse Glow (Dynamic Background)
 document.addEventListener('mousemove', (e) => {
@@ -371,28 +521,236 @@ document.addEventListener('mousemove', (e) => {
   document.body.style.setProperty('--mouse-y', `${e.clientY}px`);
 });
 
+// Typewriter Animation
+const typeWriterStrings = {
+  en: ['Digital Experiences', 'Game Engines', '3D Worlds', 'UI/UX Designs'],
+  tr: ['Dijital Deneyimler', 'Oyun Motorları', '3D Dünyalar', 'Arayüz Tasarımları']
+};
+
+let typeIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typeWriterTimeout;
+
+function initTypeWriter() {
+  const el = document.getElementById('typewriter');
+  if (!el) return;
+  
+  clearTimeout(typeWriterTimeout);
+  
+  const currentWords = typeWriterStrings[currentLang];
+  const currentWord = currentWords[typeIndex % currentWords.length];
+  
+  if (isDeleting) {
+    el.textContent = currentWord.substring(0, charIndex - 1);
+    charIndex--;
+  } else {
+    el.textContent = currentWord.substring(0, charIndex + 1);
+    charIndex++;
+  }
+  
+  let typeSpeed = isDeleting ? 50 : 100;
+  
+  if (!isDeleting && charIndex === currentWord.length) {
+    typeSpeed = 2000;
+    isDeleting = true;
+  } else if (isDeleting && charIndex === 0) {
+    isDeleting = false;
+    typeIndex++;
+    typeSpeed = 500;
+  }
+  
+  typeWriterTimeout = setTimeout(initTypeWriter, typeSpeed);
+}
+
+// Fetch and render GitHub Stats
+async function initGithubStats() {
+  const container = document.getElementById('github-stats-widget');
+  if (!container) return;
+  try {
+    const res = await fetch('./github_stats.json');
+    if (res.ok) {
+      const stats = await res.json();
+      container.innerHTML = `
+        <div class="stat-box">
+          <div class="stat-num">${stats.publicRepos}</div>
+          <div class="stat-label">${currentLang === 'tr' ? 'Herkese Açık Proje' : 'Public Repos'}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">${stats.totalStars}</div>
+          <div class="stat-label">${currentLang === 'tr' ? 'Yıldız' : 'Total Stars'}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">${stats.totalForks}</div>
+          <div class="stat-label">${currentLang === 'tr' ? 'Fork' : 'Total Forks'}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">${stats.followers}</div>
+          <div class="stat-label">${currentLang === 'tr' ? 'Takipçi' : 'Followers'}</div>
+        </div>
+      `;
+    }
+  } catch(e) {
+    console.error("Could not fetch github stats:", e);
+  }
+}
+
+// Scroll Triggered Animations
+function initScrollAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.scroll-animate').forEach(el => {
+    observer.observe(el);
+  });
+}
+
+// Cursor Animation
+function initCursor() {
+  const cursor = document.getElementById('custom-cursor');
+  const follower = document.getElementById('custom-cursor-follower');
+  if(!cursor || !follower) return;
+
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.transform = `translate3d(${e.clientX - 3}px, ${e.clientY - 3}px, 0)`;
+    follower.style.transform = `translate3d(${e.clientX - 15}px, ${e.clientY - 15}px, 0)`;
+  });
+  
+  const interactables = document.querySelectorAll('a, button, .project-card, .design-item, .model-item');
+  interactables.forEach(el => {
+    el.addEventListener('mouseenter', () => follower.classList.add('active'));
+    el.addEventListener('mouseleave', () => follower.classList.remove('active'));
+  });
+}
+
+// Particle System
+function initParticles() {
+  const canvas = document.getElementById('particle-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  let particles = [];
+  const numParticles = 40;
+  let w, h;
+  
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  
+  window.addEventListener('resize', resize);
+  resize();
+  
+  class Particle {
+    constructor() {
+      this.x = Math.random() * w;
+      this.y = Math.random() * h;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.radius = Math.random() * 2 + 0.5;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      
+      if(this.x < 0 || this.x > w) this.vx *= -1;
+      if(this.y < 0 || this.y > h) this.vy *= -1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = currentLang === 'en' ? 'rgba(184, 41, 255, 0.4)' : 'rgba(184, 41, 255, 0.4)'; // Theme independent
+      ctx.fill();
+    }
+  }
+  
+  for(let i = 0; i < numParticles; i++) {
+    particles.push(new Particle());
+  }
+  
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    
+    // Draw connections
+    for(let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+      
+      for(let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        
+        if(dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(184, 41, 255, ${0.15 - dist/120 * 0.15})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  
+  animate();
+}
+
 // Tab Switching Logic
 function initTabs() {
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Remove active class from all buttons and contents
-      tabBtns.forEach(b => b.classList.remove('active'));
-      tabContents.forEach(c => c.classList.remove('active'));
+  function activateTab(targetId) {
+    tabBtns.forEach(b => {
+      if (b.getAttribute('data-target') === targetId) {
+        b.classList.add('active');
+        b.setAttribute('aria-selected', 'true');
+      } else {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      }
+    });
 
-      // Add active class to clicked button and target content
-      btn.classList.add('active');
-      const targetId = btn.getAttribute('data-target');
-      const targetElement = document.getElementById(targetId);
-      
+    tabContents.forEach(c => c.classList.remove('active'));
+
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
       // Remove animation class, trigger reflow, and add back for smooth transition
       targetElement.classList.remove('fade-in');
       void targetElement.offsetWidth; // trigger reflow
-      
       targetElement.classList.add('active', 'fade-in');
+    }
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      window.location.hash = targetId;
+      activateTab(targetId);
     });
+  });
+
+  // Handle initial hash on load
+  const hash = window.location.hash.substring(1);
+  const isValidTab = Array.from(tabBtns).some(b => b.getAttribute('data-target') === hash);
+  if (hash && isValidTab) {
+    activateTab(hash);
+  } else {
+    activateTab('projects-wrapper'); // default
+  }
+
+  // Handle hash change from back/forward buttons
+  window.addEventListener('hashchange', () => {
+    const newHash = window.location.hash.substring(1);
+    const valid = Array.from(tabBtns).some(b => b.getAttribute('data-target') === newHash);
+    if (newHash && valid) activateTab(newHash);
   });
 }
 
@@ -637,6 +995,26 @@ function close3DLightbox() {
   }, 400);
 }
 
+// Toast Notification System
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  const icon = type === 'success' 
+    ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+    : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+    
+  toast.innerHTML = `${icon}<span>${message}</span>`;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
 // AJAX Contact Form
 function initContactForm() {
   const form = document.getElementById('contact-form');
@@ -647,7 +1025,6 @@ function initContactForm() {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const originalText = btnText.innerHTML;
       btnText.innerHTML = currentLang === 'tr' ? 'Gönderiliyor...' : 'Sending...';
       submitBtn.disabled = true;
       submitBtn.style.opacity = '0.7';
@@ -663,24 +1040,20 @@ function initContactForm() {
         });
         
         if (response.ok) {
-          btnText.innerHTML = currentLang === 'tr' ? 'Başarıyla Gönderildi ✅' : 'Sent Successfully ✅';
+          showToast(currentLang === 'tr' ? 'Mesajınız başarıyla gönderildi!' : 'Your message has been sent successfully!', 'success');
           form.reset();
-          setTimeout(() => {
-            btnText.innerHTML = translations[currentLang].form_send;
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-          }, 3000);
         } else {
           throw new Error('Network response was not ok.');
         }
       } catch (error) {
         console.error('Form submission error:', error);
-        btnText.innerHTML = currentLang === 'tr' ? 'Hata Oluştu ❌' : 'Error Occurred ❌';
+        showToast(currentLang === 'tr' ? 'Mesaj gönderilirken bir hata oluştu.' : 'An error occurred while sending your message.', 'error');
+      } finally {
         setTimeout(() => {
           btnText.innerHTML = translations[currentLang].form_send;
           submitBtn.disabled = false;
           submitBtn.style.opacity = '1';
-        }, 3000);
+        }, 1000);
       }
     });
   }

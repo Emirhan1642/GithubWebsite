@@ -6,10 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Emirhan | Portfolio</title>
     <meta name="description" content="Emirhan - Software Developer & 3D Artist Portfolio" />
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#b829ff">
+    <link rel="apple-touch-icon" href="/profile.jpg">
+
     <meta property="og:title" content="Emirhan | Software Developer & 3D Artist" />
     <meta property="og:description" content="Building next-generation game engines, social networking platforms, and creating stylized 3D environments. Powered by Vibe Coding." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/profile.jpg" />
+    <meta property="og:image" content="https://emirhan1642.vercel.app/profile.jpg" />
+    <meta property="og:url" content="https://emirhan1642.vercel.app/" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,19 +24,35 @@
     <link rel="stylesheet" href="./style.css">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
   </head>
-  <body>
+  <body data-theme="dark">
+    <!-- Particle Canvas Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor"></div>
+    <div id="custom-cursor-follower"></div>
+
     <div id="mouse-glow"></div>
     <div class="background-effects">
       <div class="glow-orb orb-1"></div>
       <div class="glow-orb orb-2"></div>
     </div>
 
+    <audio id="ambient-audio" loop>
+      <source src="/ambient.mp3" type="audio/mpeg">
+    </audio>
+
     <header class="header">
       <div class="container header-content">
         <h1 class="logo">Emirhan<span> İnan</span></h1>
-        <nav style="display: flex; gap: 10px; align-items: center;">
-          <button id="lang-toggle" class="theme-toggle" aria-label="Toggle Language" style="font-weight: 600; font-size: 0.9rem;">EN</button>
-          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+        <nav class="nav">
+          <button id="lang-toggle" class="icon-btn" aria-label="Toggle Language" style="font-weight: 600; font-size: 0.9rem;">EN</button>
+          <div class="header-controls">
+          <button id="sound-toggle" class="icon-btn" aria-label="Toggle Sound" title="Toggle Ambient Sound">
+            <svg id="sound-icon-off" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+            <svg id="sound-icon-on" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+          </button>
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
             <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
           </button>
@@ -39,7 +62,11 @@
 
     <main class="container">
       <section class="hero">
-        <h2 class="hero-title" data-i18n="hero_title">Crafting <span class="highlight">Digital</span> Experiences</h2>
+        <h2 class="hero-title">
+          <span data-i18n="hero_title_prefix">Crafting</span>
+          <br class="mobile-break" />
+          <span class="highlight typewriter" id="typewriter"></span>
+        </h2>
         <p class="hero-subtitle" data-i18n="hero_subtitle">Building robust and scalable solutions. Showcasing my private workspace projects powered by static build architecture.</p>
       </section>
 
@@ -127,16 +154,16 @@
               </div>
 
               <div class="social-links">
-                <a href="https://github.com/Emirhan1642" target="_blank" class="social-btn" title="GitHub">
+                <a href="https://github.com/Emirhan1642" target="_blank" rel="noopener noreferrer" class="social-btn" title="GitHub">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
                 </a>
-                <a href="https://linkedin.com/in/emirhan1642" target="_blank" class="social-btn" title="LinkedIn">
+                <a href="https://linkedin.com/in/emirhan1642" target="_blank" rel="noopener noreferrer" class="social-btn" title="LinkedIn">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
                 </a>
-                <a href="https://x.com/16Emirhan42" target="_blank" class="social-btn" title="X (Twitter)">
+                <a href="https://x.com/16Emirhan42" target="_blank" rel="noopener noreferrer" class="social-btn" title="X (Twitter)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>
                 </a>
-                <a href="https://instagram.com/emir.han1642" target="_blank" class="social-btn" title="Instagram">
+                <a href="https://instagram.com/emir.han1642" target="_blank" rel="noopener noreferrer" class="social-btn" title="Instagram">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                 </a>
                 <a href="mailto:1642emirhan@gmail.com" class="social-btn" title="Email">
@@ -154,18 +181,31 @@
 
               <div class="about-section-block">
                 <h3 data-i18n="tech_tools_title">Technologies & Tools</h3>
-                <div class="skills-grid">
-                  <span class="skill-tag">Luau</span>
-                  <span class="skill-tag">Kotlin</span>
-                  <span class="skill-tag">C++</span>
-                  <span class="skill-tag">JavaScript</span>
-                  <span class="skill-tag">Blender</span>
-                  <span class="skill-tag">Figma</span>
-                  <span class="skill-tag">Substance Painter</span>
-                  <span class="skill-tag">Adobe Photoshop</span>
-                  <span class="skill-tag">Antigravity</span>
-                  <span class="skill-tag">Claude</span>
-                  <span class="skill-tag">Codex</span>
+                <div class="skill-bars-container">
+                  <div class="skill-bar">
+                    <div class="skill-info"><span>Luau</span><span>95%</span></div>
+                    <div class="skill-progress"><div class="skill-fill scroll-animate" style="--target-width: 95%;"></div></div>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-info"><span>C#</span><span>90%</span></div>
+                    <div class="skill-progress"><div class="skill-fill scroll-animate" style="--target-width: 90%;"></div></div>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-info"><span>C++</span><span>80%</span></div>
+                    <div class="skill-progress"><div class="skill-fill scroll-animate" style="--target-width: 80%;"></div></div>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-info"><span>React & Next.js</span><span>85%</span></div>
+                    <div class="skill-progress"><div class="skill-fill scroll-animate" style="--target-width: 85%;"></div></div>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-info"><span>UI/UX Design</span><span>90%</span></div>
+                    <div class="skill-progress"><div class="skill-fill scroll-animate" style="--target-width: 90%;"></div></div>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-info"><span>3D Art (Blender)</span><span>75%</span></div>
+                    <div class="skill-progress"><div class="skill-fill scroll-animate" style="--target-width: 75%;"></div></div>
+                  </div>
                 </div>
               </div>
 
@@ -187,6 +227,7 @@
                       <span class="timeline-date">2026</span>
                     </div>
                   </div>
+
                   <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
@@ -225,9 +266,10 @@
                 </div>
               </div>
 
-              <div class="about-section-block">
+              <div class="about-section-block scroll-animate">
                 <h3 data-i18n="github_title">GitHub Contributions</h3>
-                <div class="github-chart-container">
+                <div id="github-stats-widget" class="github-stats-grid"></div>
+                <div class="github-chart-container" style="margin-top: 1rem;">
                   <img src="https://ghchart.rshah.org/b829ff/Emirhan1642" alt="Emirhan's GitHub Contributions" loading="lazy" />
                 </div>
               </div>
@@ -290,6 +332,43 @@
         <model-viewer id="model-viewer-element" src="" camera-controls auto-rotate shadow-intensity="1" alt="3D Model Viewer" style="width: 100%; height: 100%; --poster-color: transparent;"></model-viewer>
       </div>
     </div>
+
+
+    <!-- Case Study Modal -->
+    <div id="case-study-modal" class="modal" aria-hidden="true" role="dialog" style="display: none; position: fixed; inset: 0; z-index: 9999; justify-content: center; align-items: center;">
+      <div class="modal-backdrop" style="position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);" onclick="closeCaseStudy()"></div>
+      <div class="modal-content case-study-content" style="position: relative; background: var(--glass-bg); border: 1px solid var(--glass-border); z-index: 10000;">
+        <button class="modal-close" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer;" onclick="closeCaseStudy()" aria-label="Close modal">&times;</button>
+        <div class="case-study-header">
+          <h2 id="cs-title">Project Title</h2>
+          <a id="cs-github-link" href="#" target="_blank" rel="noopener noreferrer" class="social-btn" title="View on GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          </a>
+        </div>
+        <div class="case-study-body">
+          <div class="cs-section">
+            <h3 id="cs-problem-title">Problem</h3>
+            <p id="cs-problem-text"></p>
+          </div>
+          <div class="cs-section">
+            <h3 id="cs-solution-title">Challenges</h3>
+            <div id="cs-solution-text"></div>
+          </div>
+          <div class="cs-section">
+            <h3 id="cs-result-title">Result</h3>
+            <p id="cs-result-text"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Ambient Audio -->
+    <audio id="ambient-audio" loop>
+      <source src="https://cdn.pixabay.com/download/audio/2022/02/07/audio_67825b44fc.mp3" type="audio/mpeg">
+    </audio>
 
     <script type="module" src="./main.js"></script>
   </body>

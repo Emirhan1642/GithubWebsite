@@ -122,6 +122,43 @@ async function fetchProjects() {
   const outputPath = path.join(publicDir, 'projects_data.json');
   fs.writeFileSync(outputPath, JSON.stringify(projects, null, 2));
   console.log(`\n🎉 Successfully saved ${projects.length} projects to ${outputPath}`);
+  
+  // Fetch overall User Stats
+  try {
+    console.log(`Fetching user stats for ${GITHUB_USERNAME}...`);
+    const userRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, { headers });
+    let totalCommits = 0;
+    
+    // For commits, we would need to search or aggregate, but GitHub API doesn't easily give total commits for a user without GraphQL.
+    // As a simple alternative, we can just fetch all repos for the user and sum up stars, forks.
+    const allReposRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`, { headers });
+    let totalStars = 0;
+    let totalForks = 0;
+    let publicRepos = 0;
+    
+    if (allReposRes.ok) {
+      const allRepos = await allReposRes.json();
+      publicRepos = allRepos.length;
+      allRepos.forEach(repo => {
+        totalStars += repo.stargazers_count;
+        totalForks += repo.forks_count;
+      });
+    }
+
+    const statsData = {
+      followers: userRes.ok ? (await userRes.json()).followers : 0,
+      publicRepos,
+      totalStars,
+      totalForks
+    };
+
+    const statsOutputPath = path.join(publicDir, 'github_stats.json');
+    fs.writeFileSync(statsOutputPath, JSON.stringify(statsData, null, 2));
+    console.log(`🎉 Successfully saved GitHub stats to ${statsOutputPath}`);
+
+  } catch (error) {
+    console.error(`❌ Error fetching user stats:`, error);
+  }
 }
 
 fetchProjects();
