@@ -50,6 +50,11 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             3D Models
           </button>
+          
+          <button class="tab-btn" data-target="about-section">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            About Me
+          </button>
         </div>
         
         <!-- Code Projects Grid -->
@@ -68,6 +73,128 @@
         <div id="models-grid" class="models-grid tab-content">
           <!-- Models will be dynamically injected here -->
           <div class="loading-state">Loading models...</div>
+        </div>
+
+        <!-- About Me Section -->
+        <div id="about-section" class="tab-content">
+          <div class="about-layout animate-in">
+            
+            <!-- Left Sidebar: Profile Card -->
+            <div class="profile-card">
+              <div class="profile-image-container">
+                <img src="/profile.jpg" alt="Emirhan Profile" class="profile-img" onerror="this.src='https://ui-avatars.com/api/?name=Emirhan&background=b829ff&color=fff&size=200'">
+              </div>
+              <h2 class="profile-name">Emirhan</h2>
+              <p class="profile-tagline">Software Developer & 3D Artist</p>
+              
+              <div class="profile-details">
+                <div class="detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  <span>Born: 10/12/2008</span>
+                </div>
+                <div class="detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>Age: 17</span>
+                </div>
+                <div class="detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <span>Location: Türkiye/Bursa</span>
+                </div>
+              </div>
+
+              <div class="social-links">
+                <a href="https://github.com/Emirhan1642" target="_blank" class="social-btn" title="GitHub">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+                <a href="https://linkedin.com/in/emirhan1642" target="_blank" class="social-btn" title="LinkedIn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="https://x.com/16Emirhan42" target="_blank" class="social-btn" title="X (Twitter)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>
+                </a>
+                <a href="https://instagram.com/emir.han1642" target="_blank" class="social-btn" title="Instagram">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a href="mailto:1642emirhan@gmail.com" class="social-btn" title="Email">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Right Content: Bio, Skills, Timeline -->
+            <div class="about-content">
+              <div class="about-section-block">
+                <h3>About Me</h3>
+                <p>Hello! I am Emirhan, a passionate software developer and 3D artist. I specialize in building next-generation game engines, social networking platforms, and creating stylized 3D environments. Most recently, I have deeply embraced <strong>Vibe Coding</strong> an intuitive, flow-state approach to development where I orchestrate powerful AI tools (like Claude, Codex, and Antigravity) to rapidly prototype and build complex systems. This blend of cutting-edge AI assistance, robust programming expertise, and artistic vision allows me to create deeply immersive and highly optimized digital experiences at incredible speeds.</p>
+              </div>
+
+              <div class="about-section-block">
+                <h3>Technologies & Tools</h3>
+                <div class="skills-grid">
+                  <span class="skill-tag">Luau</span>
+                  <span class="skill-tag">Kotlin</span>
+                  <span class="skill-tag">C++</span>
+                  <span class="skill-tag">JavaScript</span>
+                  <span class="skill-tag">Blender</span>
+                  <span class="skill-tag">Figma</span>
+                  <span class="skill-tag">Substance Painter</span>
+                  <span class="skill-tag">Adobe Photoshop</span>
+                  <span class="skill-tag">Antigravity</span>
+                  <span class="skill-tag">Claude</span>
+                  <span class="skill-tag">Codex</span>
+                </div>
+              </div>
+
+              <div class="about-section-block">
+                <h3>My Journey</h3>
+                <div class="timeline">
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h4>Founded Nexus Studio</h4>
+                      <span class="timeline-date">2026</span>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h4>Founded Linker</h4>
+                      <span class="timeline-date">2025</span>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h4>Started Vibe Coding</h4>
+                      <span class="timeline-date">2025</span>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h4>Mastered Blender & Substance Painter</h4>
+                      <span class="timeline-date">2024</span>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h4>Developing Roblox Games</h4>
+                      <span class="timeline-date">2021</span>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h4>Started Programming</h4>
+                      <span class="timeline-date">2021</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
       </section>
     </main>
